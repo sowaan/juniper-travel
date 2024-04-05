@@ -1,0 +1,45 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-02-16 16:39:03.918936",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "currency",
+  "column_break_xxpj",
+  "price_list"
+ ],
+ "fields": [
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "column_break_xxpj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "price_list",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Price List",
+   "options": "Price List"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-02-16 16:39:50.749016",
+ "modified_by": "Administrator",
+ "module": "Juniper",
+ "name": "Juniper Price List",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

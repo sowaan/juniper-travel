@@ -1,0 +1,290 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-11-27 17:40:37.612151",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "site_settings_tab",
+  "base_url",
+  "password",
+  "column_break_hcxs",
+  "user_name",
+  "section_break_qofj",
+  "juniper_price_list",
+  "customer_settings_tab",
+  "cus_end_point",
+  "from_date",
+  "fetch_data",
+  "column_break_ogle",
+  "cus_soap_action",
+  "to_date",
+  "supplier_settings_tab",
+  "sup_endpoint",
+  "sup_from_date",
+  "fetch_suppliers",
+  "column_break_esze",
+  "sup_soap_action",
+  "sup_to_date",
+  "product_setting_tab",
+  "pro_endpoint",
+  "fetch_products",
+  "column_break_gzwt",
+  "pro_soap_action",
+  "sale_order_tab",
+  "sale_endpoint",
+  "booking_code",
+  "fetch_bookings",
+  "column_break_czuj",
+  "sale_soap_action",
+  "sales_from_date",
+  "sale_to_date",
+  "sales_invoice_tab",
+  "invoice_endpoint",
+  "invoice_number",
+  "invoice_from_date",
+  "fetch_invoices",
+  "column_break_ahan",
+  "invoice_soap_action",
+  "invoice_id",
+  "invoice_to_date"
+ ],
+ "fields": [
+  {
+   "columns": 1,
+   "fieldname": "base_url",
+   "fieldtype": "Data",
+   "label": "Base Url"
+  },
+  {
+   "fieldname": "user_name",
+   "fieldtype": "Data",
+   "label": "User Name"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Data",
+   "label": "Password"
+  },
+  {
+   "fieldname": "column_break_hcxs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fetch_data",
+   "fieldtype": "Button",
+   "label": "Fetch Customers"
+  },
+  {
+   "fieldname": "site_settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "Site Settings"
+  },
+  {
+   "fieldname": "customer_settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "Customer Settings"
+  },
+  {
+   "fieldname": "column_break_ogle",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "supplier_settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "Supplier Settings"
+  },
+  {
+   "fieldname": "column_break_esze",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fetch_suppliers",
+   "fieldtype": "Button",
+   "label": "Fetch Suppliers"
+  },
+  {
+   "fieldname": "product_setting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Product Setting"
+  },
+  {
+   "fieldname": "pro_endpoint",
+   "fieldtype": "Data",
+   "label": "End Point"
+  },
+  {
+   "fieldname": "column_break_gzwt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fetch_products",
+   "fieldtype": "Button",
+   "label": "Fetch Products"
+  },
+  {
+   "fieldname": "cus_soap_action",
+   "fieldtype": "Data",
+   "label": "SOAP Action"
+  },
+  {
+   "fieldname": "sup_soap_action",
+   "fieldtype": "Data",
+   "label": "SOAP Action"
+  },
+  {
+   "fieldname": "pro_soap_action",
+   "fieldtype": "Data",
+   "label": "SOAP Action"
+  },
+  {
+   "fieldname": "cus_end_point",
+   "fieldtype": "Data",
+   "label": "End Point"
+  },
+  {
+   "fieldname": "sup_endpoint",
+   "fieldtype": "Data",
+   "label": "End Point"
+  },
+  {
+   "default": "Today",
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "default": "Today",
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "sup_from_date",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "sup_to_date",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "sale_order_tab",
+   "fieldtype": "Tab Break",
+   "label": "Sale Order"
+  },
+  {
+   "fieldname": "booking_code",
+   "fieldtype": "Data",
+   "label": "Booking Code"
+  },
+  {
+   "fieldname": "sales_from_date",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "column_break_czuj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sale_to_date",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "fetch_bookings",
+   "fieldtype": "Button",
+   "label": "Fetch Bookings"
+  },
+  {
+   "fieldname": "sale_endpoint",
+   "fieldtype": "Data",
+   "label": "End Point"
+  },
+  {
+   "fieldname": "sale_soap_action",
+   "fieldtype": "Data",
+   "label": "Soap Action"
+  },
+  {
+   "fieldname": "sales_invoice_tab",
+   "fieldtype": "Tab Break",
+   "label": "Sales Invoice"
+  },
+  {
+   "fieldname": "invoice_endpoint",
+   "fieldtype": "Data",
+   "label": "End Point"
+  },
+  {
+   "fieldname": "invoice_number",
+   "fieldtype": "Data",
+   "label": "Invoice Number"
+  },
+  {
+   "fieldname": "column_break_ahan",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "invoice_soap_action",
+   "fieldtype": "Data",
+   "label": "Soap Action"
+  },
+  {
+   "fieldname": "fetch_invoices",
+   "fieldtype": "Button",
+   "label": "Fetch Invoices"
+  },
+  {
+   "fieldname": "section_break_qofj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "juniper_price_list",
+   "fieldtype": "Table",
+   "label": "Juniper Price List",
+   "options": "Juniper Price List"
+  },
+  {
+   "fieldname": "invoice_id",
+   "fieldtype": "Data",
+   "label": "Invoice Id"
+  },
+  {
+   "fieldname": "invoice_from_date",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "invoice_to_date",
+   "fieldtype": "Date",
+   "label": "To Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-02-22 14:48:00.557268",
+ "modified_by": "Administrator",
+ "module": "Juniper",
+ "name": "Juniper Site",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
