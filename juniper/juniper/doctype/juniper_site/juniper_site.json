@@ -10,8 +10,6 @@
   "password",
   "column_break_hcxs",
   "user_name",
-  "section_break_qofj",
-  "juniper_price_list",
   "customer_settings_tab",
   "cus_end_point",
   "from_date",
@@ -26,11 +24,6 @@
   "column_break_esze",
   "sup_soap_action",
   "sup_to_date",
-  "product_setting_tab",
-  "pro_endpoint",
-  "fetch_products",
-  "column_break_gzwt",
-  "pro_soap_action",
   "sale_order_tab",
   "sale_endpoint",
   "booking_code",
@@ -104,36 +97,12 @@
    "label": "Fetch Suppliers"
   },
   {
-   "fieldname": "product_setting_tab",
-   "fieldtype": "Tab Break",
-   "label": "Product Setting"
-  },
-  {
-   "fieldname": "pro_endpoint",
-   "fieldtype": "Data",
-   "label": "End Point"
-  },
-  {
-   "fieldname": "column_break_gzwt",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "fetch_products",
-   "fieldtype": "Button",
-   "label": "Fetch Products"
-  },
-  {
    "fieldname": "cus_soap_action",
    "fieldtype": "Data",
    "label": "SOAP Action"
   },
   {
    "fieldname": "sup_soap_action",
-   "fieldtype": "Data",
-   "label": "SOAP Action"
-  },
-  {
-   "fieldname": "pro_soap_action",
    "fieldtype": "Data",
    "label": "SOAP Action"
   },
@@ -238,16 +207,6 @@
    "label": "Fetch Invoices"
   },
   {
-   "fieldname": "section_break_qofj",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "juniper_price_list",
-   "fieldtype": "Table",
-   "label": "Juniper Price List",
-   "options": "Juniper Price List"
-  },
-  {
    "fieldname": "invoice_id",
    "fieldtype": "Data",
    "label": "Invoice Id"
@@ -265,7 +224,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-22 14:48:00.557268",
+ "modified": "2024-04-05 14:29:55.465178",
  "modified_by": "Administrator",
  "module": "Juniper",
  "name": "Juniper Site",
