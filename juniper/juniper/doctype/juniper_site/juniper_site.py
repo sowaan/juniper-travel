@@ -7,24 +7,66 @@ from frappe import _
 import requests
 from frappe.model.document import Document
 from frappe.utils.data import getdate
-from frappe.utils import flt
+from frappe.utils import flt, now, add_to_date
+from datetime import datetime, timedelta
 
 
 class JuniperSite(Document):
 	def before_save(self):
 		pass
 
+
+def get_juniper_site_list():
+	sites = frappe.get_all("Juniper Site", fields=['*'])
+
+	if not sites:
+		frappe.throw(_("No Juniper sites found. Please create at least one site and try again"))
+
+	return sites
+
 @frappe.whitelist()
-def sync_customer(doc):
+def sync_customer_with_scheduler():
+	junier_sites = get_juniper_site_list()
+	from_date = now() - timedelta(days=30)
+	to_date = now()
+	for doc in junier_sites:
+		sync_customer(doc, from_date, to_date)
+
+@frappe.whitelist()
+def sync_supplier_with_scheduler():
+	junier_sites = get_juniper_site_list()
+	from_date = now() - timedelta(days=30)
+	to_date = now()
+	for doc in junier_sites:
+		sync_supplier(doc, from_date, to_date)
+
+@frappe.whitelist()
+def sync_sales_order_with_scheduler():
+	junier_sites = get_juniper_site_list()
+	from_date = now() - timedelta(days=30)
+	to_date = now()
+	for doc in junier_sites:
+		sync_sales_order(doc, from_date, to_date)
+
+@frappe.whitelist()
+def sync_sales_invoice_with_scheduler():
+	junier_sites = get_juniper_site_list()
+	from_date = now() - timedelta(days=30)
+	to_date = now()
+	for doc in junier_sites:
+		sync_sales_invoice(doc, from_date, to_date)
+
+
+@frappe.whitelist()
+def sync_customer(doc, from_date, to_date):
 	doc = json.loads(doc)
 	soap_action = doc.get('cus_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
 
 	url = doc.get('base_url') + doc.get('cus_end_point')
-	from_date = getdate(doc.get('from_date')).strftime("%Y%m%d") if doc.get('from_date') else ''
-	to_date = getdate(doc.get('to_date')).strftime("%Y%m%d") if doc.get('to_date') else ''
-	# print(from_date, to_date, "check date \n\n\n")
+	from_date = getdate(from_date).strftime("%Y%m%d") if from_date else ''
+	to_date = getdate(from_date).strftime("%Y%m%d") if to_date else ''
 	# structured XML
 	payload = f"""<?xml version="1.0" encoding="utf-8"?>
 	<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -55,24 +97,23 @@ def sync_customer(doc):
 	jsonvalue = json.dumps(obj)
 	value = json.loads(jsonvalue)
 	response = value.get("soap:Envelope").get("soap:Body").get("getCustomerListResponse").get("getCustomerListResult").get("wsResult")
-	print(payload, "Checking Response \n\n\n")
 	cus_list = response.get("Customers").get("Customer") if response.get("Customers") else response.get("Customers")
-	# print(cus_list[0].get("General").get("CustomerGroup") , "check")
+	
 	if cus_list:
 		for cus in cus_list:
 			set_customer(cus)
 
 
 @frappe.whitelist()
-def sync_supplier(doc):
+def sync_supplier(doc, from_date, to_date):
 	doc = json.loads(doc)
 	soap_action = doc.get('sup_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
 
 	url = doc.get('base_url') + doc.get('sup_endpoint')
-	sup_from_date = getdate(doc.get('sup_from_date')).strftime("%Y%m%d")
-	sup_to_date = getdate(doc.get('sup_to_date')).strftime("%Y%m%d")
+	sup_from_date = getdate(from_date).strftime("%Y%m%d") if from_date else ''
+	sup_to_date = getdate(to_date).strftime("%Y%m%d") if to_date else ''
  
 	# structured XML
 	payload = f"""<?xml version="1.0" encoding="utf-8"?>
@@ -109,60 +150,17 @@ def sync_supplier(doc):
 	for sup in sup_list:
 		set_supplier(sup)
 
-# @frappe.whitelist()
-# def sync_products(doc):
-# 	doc = json.loads(doc)
-# 	soap_action = doc.get('pro_soap_action')
-# 	user = str(doc.get('user_name'))
-# 	password = str(doc.get('password'))
-
-# 	url = doc.get('base_url') + doc.get('pro_endpoint')
- 
-# 	# structured XML
-# 	payload = f"""<?xml version="1.0" encoding="utf-8"?>
-# 	<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-# 	<soap:Body>
-# 		<getProductGroups xmlns="http://juniper.es/">
-# 			<user>{user}</user>
-# 			<password>{password}</password>
-# 			<creationDateFrom>20221029</creationDateFrom>
-#       		<creationDateTo>20240118</creationDateTo>
-# 		</getProductGroups>
-# 	</soap:Body>
-# 	</soap:Envelope>"""
-# 	headers = {
-# 		'SOAPAction': soap_action,
-# 		'Content-Type': 'text/xml; charset=utf-8'
-# 	}
-
-# 	try:
-# 		res = requests.request("POST", url, headers=headers, data=payload)
-# 	except requests.exceptions.HTTPError:
-# 		button_label = frappe.bold(_("Get Access Token"))
-# 		frappe.throw(
-# 			(
-# 				"Something went wrong during the people sync. Click on {0} to generate a new one."
-# 			).format(button_label)
-# 		)
-# 	obj = xmltodict.parse(res.text, process_namespaces=False)
-# 	jsonvalue = json.dumps(obj)
-# 	value = json.loads(jsonvalue)
-# 	# sup_list = value.get("soap:Envelope").get("soap:Body").get("getSupplierListResponse").get("getSupplierListResult").get("wsResult").get("Suppliers").get("Supplier")
-# 	# print(value, "check")
-# 	# print(cus_list[0].get("General").get("CustomerGroup") , "check")
-# 	# for sup in sup_list:
-# 	# 	set_supplier(sup)
 
 @frappe.whitelist()
-def sync_sales_order(doc):
+def sync_sales_order(doc, from_date, to_date):
 	doc = json.loads(doc)
 	soap_action = doc.get('sale_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
 
 	url = doc.get('base_url') + doc.get('sale_endpoint')
-	sale_from_date = getdate(doc.get('sale_from_date')).strftime("%Y%m%d")
-	sale_to_date = getdate(doc.get('sale_to_date')).strftime("%Y%m%d")
+	sale_from_date = getdate(from_date).strftime("%Y%m%d") if from_date else ''
+	sale_to_date = getdate(to_date).strftime("%Y%m%d") if to_date else ''
 	booking_code = doc.get('booking_code')
  
 	# structured XML
@@ -205,7 +203,7 @@ def sync_sales_order(doc):
 
 
 @frappe.whitelist()
-def sync_sales_invoice(doc):
+def sync_sales_invoice(doc, from_date, to_date):
 	doc = json.loads(doc)
 	soap_action = doc.get('invoice_soap_action')
 	user = str(doc.get('user_name'))
@@ -214,8 +212,8 @@ def sync_sales_invoice(doc):
 	url = doc.get('base_url') + doc.get('invoice_endpoint')
 	invoice_number = doc.get('invoice_number')
 	invoice_id = doc.get('invoice_id')
-	from_date = getdate(doc.get('invoice_from_date')).strftime("%Y%m%d")
-	to_date = getdate(doc.get('invoice_to_date')).strftime("%Y%m%d")
+	from_date = getdate(from_date).strftime("%Y%m%d") if from_date else ''
+	to_date = getdate(to_date).strftime("%Y%m%d") if to_date else ''
 	# structured XML
 	payload = f"""<?xml version="1.0" encoding="utf-8"?>
 		<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">

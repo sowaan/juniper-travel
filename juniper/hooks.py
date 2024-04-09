@@ -153,23 +153,25 @@ fixtures = [
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 #	"all": [
 #		"juniper.tasks.all"
 #	],
-#	"daily": [
-#		"juniper.tasks.daily"
-#	],
-#	"hourly": [
-#		"juniper.tasks.hourly"
-#	],
+	"daily": [
+		"juniper.juniper.doctype.juniper_site.juniper_site.sync_customer_with_scheduler",
+		"juniper.juniper.doctype.juniper_site.juniper_site.sync_supplier_with_scheduler"
+		"juniper.juniper.doctype.juniper_site.juniper_site.sync_sales_order_with_scheduler",
+		"juniper.juniper.doctype.juniper_site.juniper_site.sync_sales_invoice_with_scheduler"
+	],
+	# "hourly": [
+	# ],
 #	"weekly": [
 #		"juniper.tasks.weekly"
 #	],
 #	"monthly": [
 #		"juniper.tasks.monthly"
 #	],
-# }
+}
 
 # Testing
 # -------
