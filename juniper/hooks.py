@@ -159,7 +159,7 @@ scheduler_events = {
 #	],
 	"daily": [
 		"juniper.juniper.doctype.juniper_site.juniper_site.sync_customer_with_scheduler",
-		"juniper.juniper.doctype.juniper_site.juniper_site.sync_supplier_with_scheduler"
+		"juniper.juniper.doctype.juniper_site.juniper_site.sync_supplier_with_scheduler",
 		"juniper.juniper.doctype.juniper_site.juniper_site.sync_sales_order_with_scheduler",
 		"juniper.juniper.doctype.juniper_site.juniper_site.sync_sales_invoice_with_scheduler"
 	],
