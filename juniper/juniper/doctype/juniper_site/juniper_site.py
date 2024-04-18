@@ -161,7 +161,7 @@ def sync_sales_order(doc, from_date, to_date):
 	url = doc.get('base_url') + doc.get('sale_endpoint')
 	sale_from_date = getdate(from_date).strftime("%Y%m%d") if from_date else ''
 	sale_to_date = getdate(to_date).strftime("%Y%m%d") if to_date else ''
-	booking_code = doc.get('booking_code')
+	booking_code = doc.get('booking_code') if doc.get('booking_code') else ''
  
 	# structured XML
 	payload = f"""<?xml version="1.0" encoding="utf-8"?>
@@ -309,7 +309,7 @@ def set_customer(customer):
 
 def set_supplier(supplier, zone=None):
 	supplierName = supplier.get("Name") or supplier.get("SupplierName")
-	country = zone.get("country", "")
+	country = zone.get("country", "") if zone else ''
 	# if supplier.get("SupplierGroup"):
 	# 	if supplier.get("SupplierGroup").get("#text"):
 	# 		sup_group = frappe.get_doc({
