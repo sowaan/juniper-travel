@@ -50,7 +50,7 @@ frappe.ui.form.on("Juniper Site", {
         "juniper.juniper.doctype.juniper_site.juniper_site.sync_sales_order",
       args: {
         doc: frm.doc,
-        from_date: frm.doc.sale_from_date,
+        from_date: frm.doc.sales_from_date,
         to_date: frm.doc.sale_to_date,
       },
       callback: function (r) {
