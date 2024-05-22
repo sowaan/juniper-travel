@@ -60,6 +60,8 @@ def sync_sales_invoice_with_scheduler():
 @frappe.whitelist()
 def sync_customer(doc, from_date, to_date):
 	doc = json.loads(doc)
+	from_date = doc.get("from_date")
+	to_date = doc.get("to_date")
 	soap_action = doc.get('cus_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
@@ -105,8 +107,10 @@ def sync_customer(doc, from_date, to_date):
 
 
 @frappe.whitelist()
-def sync_supplier(doc, from_date, to_date):
+def sync_supplier(doc):
 	doc = json.loads(doc)
+	from_date = doc.get("sup_from_date")
+	to_date = doc.get("sup_to_date")
 	soap_action = doc.get('sup_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
@@ -152,15 +156,17 @@ def sync_supplier(doc, from_date, to_date):
 
 
 @frappe.whitelist()
-def sync_sales_order(doc, from_date, to_date):
+def sync_sales_order(doc):
 	doc = json.loads(doc)
+	sales_from_date = doc.get("sales_from_date")
+	sale_to_date = doc.get("sale_to_date")
 	soap_action = doc.get('sale_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
 
 	url = doc.get('base_url') + doc.get('sale_endpoint')
-	sale_from_date = getdate(from_date).strftime("%Y%m%d") if from_date else ''
-	sale_to_date = getdate(to_date).strftime("%Y%m%d") if to_date else ''
+	sale_from_date = getdate(sales_from_date).strftime("%Y%m%d") if sales_from_date else ''
+	sale_to_date = getdate(sale_to_date).strftime("%Y%m%d") if sale_to_date else ''
 	booking_code = doc.get('booking_code') if doc.get('booking_code') else ''
  
 	# structured XML
@@ -203,8 +209,10 @@ def sync_sales_order(doc, from_date, to_date):
 
 
 @frappe.whitelist()
-def sync_sales_invoice(doc, from_date, to_date):
+def sync_sales_invoice(doc):
 	doc = json.loads(doc)
+	invoice_from_date = doc.get("invoice_from_date")
+	invoice_to_date = doc.get("invoice_to_date")
 	soap_action = doc.get('invoice_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
@@ -212,8 +220,8 @@ def sync_sales_invoice(doc, from_date, to_date):
 	url = doc.get('base_url') + doc.get('invoice_endpoint')
 	invoice_number = doc.get('invoice_number')
 	invoice_id = doc.get('invoice_id')
-	from_date = getdate(from_date).strftime("%Y%m%d") if from_date else ''
-	to_date = getdate(to_date).strftime("%Y%m%d") if to_date else ''
+	from_date = getdate(invoice_from_date).strftime("%Y%m%d") if invoice_from_date else ''
+	to_date = getdate(invoice_to_date).strftime("%Y%m%d") if invoice_to_date else ''
 	# structured XML
 	payload = f"""<?xml version="1.0" encoding="utf-8"?>
 		<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -232,7 +240,7 @@ def sync_sales_invoice(doc, from_date, to_date):
 		'SOAPAction': soap_action,
 		'Content-Type': 'text/xml; charset=utf-8'
 	}
-
+	print(url, headers, payload, "Check Headers payload \n\n\n\n\n")
 	try:
 		res = requests.request("POST", url, headers=headers, data=payload)
 	except requests.exceptions.HTTPError:
@@ -245,6 +253,7 @@ def sync_sales_invoice(doc, from_date, to_date):
 	obj = xmltodict.parse(res.text, process_namespaces=False)
 	jsonvalue = json.dumps(obj)
 	value = json.loads(jsonvalue)
+	print(value, "Check \n\n\n\n\n")
 	invoice = value.get("soap:Envelope").get("soap:Body").get("GetInvoicesResponse").get("GetInvoicesResult").get("wsResult").get("Invoices").get("Invoice")
 	# order_list = value.get("soap:Envelope").get("soap:Body").get("getBookingsResponse").get("getBookingsResult").get("wsResult").get("Bookings").get("Booking")
 	# set_booking(order_list)

@@ -10,9 +10,7 @@ frappe.ui.form.on("Juniper Site", {
     frappe.call({
       method: "juniper.juniper.doctype.juniper_site.juniper_site.sync_customer",
       args: {
-        doc: frm.doc,
-        from_date: frm.doc.from_date,
-        to_date: frm.doc.to_date,
+        doc: frm.doc
       },
       callback: function (r) {
         if (!r.exc) {
@@ -29,9 +27,7 @@ frappe.ui.form.on("Juniper Site", {
     frappe.call({
       method: "juniper.juniper.doctype.juniper_site.juniper_site.sync_supplier",
       args: {
-        doc: frm.doc,
-        from_date: frm.doc.sup_from_date,
-        to_date: frm.doc.sup_to_date,
+        doc: frm.doc
       },
       callback: function (r) {
         if (!r.exc) {
@@ -50,8 +46,6 @@ frappe.ui.form.on("Juniper Site", {
         "juniper.juniper.doctype.juniper_site.juniper_site.sync_sales_order",
       args: {
         doc: frm.doc,
-        from_date: frm.doc.sales_from_date,
-        to_date: frm.doc.sale_to_date,
       },
       callback: function (r) {
         if (!r.exc) {
@@ -70,8 +64,6 @@ frappe.ui.form.on("Juniper Site", {
         "juniper.juniper.doctype.juniper_site.juniper_site.sync_sales_invoice",
       args: {
         doc: frm.doc,
-        from_date: frm.doc.invoice_from_date,
-        to_date: frm.doc.invoice_to_date,
       },
       callback: function (r) {
         if (!r.exc) {
