@@ -240,7 +240,7 @@ def sync_sales_invoice(doc):
 		'SOAPAction': soap_action,
 		'Content-Type': 'text/xml; charset=utf-8'
 	}
-	print(url, headers, payload, "Check Headers payload \n\n\n\n\n")
+	# print(url, headers, payload, "Check Headers payload \n\n\n\n\n")
 	try:
 		res = requests.request("POST", url, headers=headers, data=payload)
 	except requests.exceptions.HTTPError:
@@ -253,7 +253,7 @@ def sync_sales_invoice(doc):
 	obj = xmltodict.parse(res.text, process_namespaces=False)
 	jsonvalue = json.dumps(obj)
 	value = json.loads(jsonvalue)
-	print(value, "Check \n\n\n\n\n")
+	# print(value, "Check \n\n\n\n\n")
 	invoice = value.get("soap:Envelope").get("soap:Body").get("GetInvoicesResponse").get("GetInvoicesResult").get("wsResult").get("Invoices").get("Invoice")
 	# order_list = value.get("soap:Envelope").get("soap:Body").get("getBookingsResponse").get("getBookingsResult").get("wsResult").get("Bookings").get("Booking")
 	# set_booking(order_list)
@@ -267,7 +267,7 @@ def set_customer(customer):
 	cont = customer.get("Contact")
 	cust_doc = {}
 	customerGroup = {}
-	print(gen.get("Name"), gen.get("CustomerGroup"), "Checnking Customer")
+	# print(gen.get("Name"), gen.get("CustomerGroup"), "Checnking Customer")
 	if gen.get("CustomerGroup"):
 		customerGroupName = frappe.db.exists("Customer Group", {"customer_group_name": gen.get("CustomerGroup").get("#text")})
 		if not customerGroupName:
@@ -327,7 +327,7 @@ def set_supplier(supplier, zone=None):
 	# 		})
 	# 		sup_group.save()
 	supplierListName = frappe.db.exists("Supplier", {"supplier_name": supplierName})
-	print(supplierName, country, supplierListName, "supplierName \n\n\n\n")
+	# print(supplierName, country, supplierListName, "supplierName \n\n\n\n")
 	if not supplierListName:
 		sup_doc = frappe.get_doc({
 			"doctype": "Supplier",
