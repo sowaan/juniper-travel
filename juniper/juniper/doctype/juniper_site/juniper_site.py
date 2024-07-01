@@ -58,7 +58,7 @@ def sync_sales_invoice_with_scheduler():
 
 
 @frappe.whitelist()
-def sync_customer(doc, from_date, to_date):
+def sync_customer(doc):
 	doc = json.loads(doc)
 	from_date = doc.get("from_date")
 	to_date = doc.get("to_date")
