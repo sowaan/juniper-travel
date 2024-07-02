@@ -27,41 +27,41 @@ def get_juniper_site_list():
 @frappe.whitelist()
 def sync_customer_with_scheduler():
 	junier_sites = get_juniper_site_list()
-	from_date = now() - timedelta(days=30)
+	from_date = datetime.strptime(now(), '%Y-%m-%d %H:%M:%S.%f') - timedelta(days=30)
 	to_date = now()
 	for doc in junier_sites:
-		sync_customer(doc, from_date, to_date)
+		sync_customer(doc, from_date=from_date, to_date=to_date)
 
 @frappe.whitelist()
 def sync_supplier_with_scheduler():
 	junier_sites = get_juniper_site_list()
-	from_date = now() - timedelta(days=30)
+	from_date = datetime.strptime(now(), '%Y-%m-%d %H:%M:%S.%f') - timedelta(days=30)
 	to_date = now()
 	for doc in junier_sites:
-		sync_supplier(doc, from_date, to_date)
+		sync_supplier(doc, sup_from_date=from_date, sup_to_date=to_date)
 
 @frappe.whitelist()
 def sync_sales_order_with_scheduler():
 	junier_sites = get_juniper_site_list()
-	from_date = now() - timedelta(days=30)
+	from_date = datetime.strptime(now(), '%Y-%m-%d %H:%M:%S.%f') - timedelta(days=30)
 	to_date = now()
 	for doc in junier_sites:
-		sync_sales_order(doc, from_date, to_date)
+		sync_sales_order(doc, sales_from_date=from_date, sale_to_date=to_date)
 
 @frappe.whitelist()
 def sync_sales_invoice_with_scheduler():
 	junier_sites = get_juniper_site_list()
-	from_date = now() - timedelta(days=30)
+	from_date = datetime.strptime(now(), '%Y-%m-%d %H:%M:%S.%f') - timedelta(days=30)
 	to_date = now()
 	for doc in junier_sites:
-		sync_sales_invoice(doc, from_date, to_date)
+		sync_sales_invoice(doc, invoice_from_date=from_date, invoice_to_date=to_date)
 
 
 @frappe.whitelist()
-def sync_customer(doc):
+def sync_customer(doc, **args):
 	doc = json.loads(doc)
-	from_date = doc.get("from_date")
-	to_date = doc.get("to_date")
+	from_date = args.get("from_date")
+	to_date = args.get("to_date")
 	soap_action = doc.get('cus_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
@@ -101,16 +101,31 @@ def sync_customer(doc):
 	response = value.get("soap:Envelope").get("soap:Body").get("getCustomerListResponse").get("getCustomerListResult").get("wsResult")
 	cus_list = response.get("Customers").get("Customer") if response.get("Customers") else response.get("Customers")
 	
+	if isinstance(cus_list, dict):
+		cus_list = [cus_list]
+
 	if cus_list:
 		for cus in cus_list:
 			set_customer(cus)
+		frappe.msgprint(
+			msg=_(
+				"<b style='color:green'> synced successfully! </b>"
+			)
+		)
+	else:
+		frappe.msgprint(
+			msg=_(
+				"<b style='color:red'> No data found! </b>"
+			)
+		)
+	
 
 
 @frappe.whitelist()
-def sync_supplier(doc):
+def sync_supplier(doc, **args):
 	doc = json.loads(doc)
-	from_date = doc.get("sup_from_date")
-	to_date = doc.get("sup_to_date")
+	from_date = args.get("sup_from_date")
+	to_date = args.get("sup_to_date")
 	soap_action = doc.get('sup_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
@@ -149,17 +164,31 @@ def sync_supplier(doc):
 	jsonvalue = json.dumps(obj)
 	value = json.loads(jsonvalue)
 	sup_list = value.get("soap:Envelope").get("soap:Body").get("getSupplierListResponse").get("getSupplierListResult").get("wsResult").get("Suppliers").get("Supplier")
-	# print(sup_list, "check")
-	# print(cus_list[0].get("General").get("CustomerGroup") , "check")
-	for sup in sup_list:
-		set_supplier(sup)
+	
+	if isinstance(sup_list, dict):
+		sup_list = [sup_list]
+
+	if sup_list:
+		for sup in sup_list:
+			set_supplier(sup)
+		frappe.msgprint(
+			msg=_(
+				"<b style='color:green'> synced successfully! </b>"
+			)
+		)
+	else:
+		frappe.msgprint(
+			msg=_(
+				"<b style='color:red'> No data found! </b>"
+			)
+		)
 
 
 @frappe.whitelist()
-def sync_sales_order(doc):
+def sync_sales_order(doc, **args):
 	doc = json.loads(doc)
-	sales_from_date = doc.get("sales_from_date")
-	sale_to_date = doc.get("sale_to_date")
+	sales_from_date = args.get("sales_from_date")
+	sale_to_date = args.get("sale_to_date")
 	soap_action = doc.get('sale_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
@@ -203,16 +232,28 @@ def sync_sales_order(doc):
 	# print(order_list, "Order List Check \n\n\n")
 	if isinstance(order_list, dict):
 		order_list = [order_list]
-	for order in order_list:
-		if order.get("@Status") == "OK":
-			set_booking(order)
+	if order_list:	
+		for order in order_list:
+			if order.get("@Status") == "OK":
+				set_booking(order)
+		frappe.msgprint(
+			msg=_(
+				"<b style='color:green'> synced successfully! </b>"
+			)
+		)
+	else:
+		frappe.msgprint(
+			msg=_(
+				"<b style='color:red'> No data found! </b>"
+			)
+		)
 
 
 @frappe.whitelist()
-def sync_sales_invoice(doc):
+def sync_sales_invoice(doc, **args):
 	doc = json.loads(doc)
-	invoice_from_date = doc.get("invoice_from_date")
-	invoice_to_date = doc.get("invoice_to_date")
+	invoice_from_date = args.get("invoice_from_date")
+	invoice_to_date = args.get("invoice_to_date")
 	soap_action = doc.get('invoice_soap_action')
 	user = str(doc.get('user_name'))
 	password = str(doc.get('password'))
@@ -253,13 +294,26 @@ def sync_sales_invoice(doc):
 	obj = xmltodict.parse(res.text, process_namespaces=False)
 	jsonvalue = json.dumps(obj)
 	value = json.loads(jsonvalue)
-	# print(value, "Check \n\n\n\n\n")
 	invoice = value.get("soap:Envelope").get("soap:Body").get("GetInvoicesResponse").get("GetInvoicesResult").get("wsResult").get("Invoices").get("Invoice")
-	# order_list = value.get("soap:Envelope").get("soap:Body").get("getBookingsResponse").get("getBookingsResult").get("wsResult").get("Bookings").get("Booking")
-	# set_booking(order_list)
-	for inv in invoice:
-		# if float(inv.get("@TotalInvoiceAmount")) > 0:
-		set_sales_invoice(inv, doc)
+
+	if isinstance(invoice, dict):
+		invoice = [invoice]
+	
+	if invoice:
+		for inv in invoice:
+			# if float(inv.get("@TotalInvoiceAmount")) > 0:
+			set_sales_invoice(inv, doc)
+		frappe.msgprint(
+			msg=_(
+				"<b style='color:green'> synced successfully! </b>"
+			)
+		)
+	else:
+		frappe.msgprint(
+			msg=_(
+				"<b style='color:red'> No data found! </b>"
+			)
+		)
 
 
 def set_customer(customer):
@@ -267,7 +321,6 @@ def set_customer(customer):
 	cont = customer.get("Contact")
 	cust_doc = {}
 	customerGroup = {}
-	# print(gen.get("Name"), gen.get("CustomerGroup"), "Checnking Customer")
 	if gen.get("CustomerGroup"):
 		customerGroupName = frappe.db.exists("Customer Group", {"customer_group_name": gen.get("CustomerGroup").get("#text")})
 		if not customerGroupName:
@@ -519,88 +572,92 @@ def set_purchase_invoice(line, order):
 
 
 def set_sales_invoice(invoice, doc):
-	default_session = frappe.defaults.get_defaults()
+	try:
+		default_session = frappe.defaults.get_defaults()
 
-	# Get default company from the session
-	default_company = default_session.get("company")
-	customer = invoice.get("Customer")
-	customer['Name'] = customer.get("CustomerName")
-	lines = invoice.get("Lines").get("Line")
-	taxes = invoice.get("taxes")
-	paxes = invoice.get("PassengerList").get("Passenger") if invoice.get("PassengerList") else invoice.get("PassengerList")
-	invoice_customer = order_customer(customer)
-	taxes_and_charges = get_default_tax_template()
-	if not frappe.db.exists("Sales Invoice", {"custom_invoice_id": invoice.get("@IdInvoice")}):
-		if getdate(invoice.get("@DueDate")) >= getdate(invoice.get("@InvoiceDate")):
-			si = frappe.get_doc({
-				"doctype": "Sales Invoice",
-				"customer": invoice_customer.name,
-				"custom_invoice_id": invoice.get("@IdInvoice"),
-				"set_posting_time": 1,
-				"posting_date": invoice.get("@InvoiceDate"),
-				"due_date": invoice.get("@DueDate"),
-				"currency": invoice.get("@Currency"),
-				"custom_invoice_number": invoice.get("@InvoiceNumber"),
-				"custom_invoice_series": invoice.get("@InvoiceSeries"),
-				"company": default_company,
-			})
-			if taxes:
-				taxes = taxes.get("tax")
-				si.taxes_and_charges = taxes_and_charges.name
-			if invoice.get("@CreditInvoice") == "yes":
-				si.is_return = 1
+		# Get default company from the session
+		default_company = default_session.get("company")
+		customer = invoice.get("Customer")
+		customer['Name'] = customer.get("CustomerName")
+		lines = invoice.get("Lines").get("Line")
+		taxes = invoice.get("taxes")
+		paxes = invoice.get("PassengerList").get("Passenger") if invoice.get("PassengerList") else invoice.get("PassengerList")
+		invoice_customer = order_customer(customer)
+		taxes_and_charges = get_default_tax_template()
+		if not frappe.db.exists("Sales Invoice", {"custom_invoice_id": invoice.get("@IdInvoice")}):
+			if getdate(invoice.get("@DueDate")) >= getdate(invoice.get("@InvoiceDate")):
+				si = frappe.get_doc({
+					"doctype": "Sales Invoice",
+					"customer": invoice_customer.name,
+					"custom_invoice_id": invoice.get("@IdInvoice"),
+					"set_posting_time": 1,
+					"posting_date": invoice.get("@InvoiceDate"),
+					"due_date": invoice.get("@DueDate"),
+					"currency": invoice.get("@Currency"),
+					"custom_invoice_number": invoice.get("@InvoiceNumber"),
+					"custom_invoice_series": invoice.get("@InvoiceSeries"),
+					"company": default_company,
+				})
+				if taxes:
+					taxes = taxes.get("tax")
+					si.taxes_and_charges = taxes_and_charges.name
+				if invoice.get("@CreditInvoice") == "yes":
+					si.is_return = 1
 
-			if isinstance(lines, dict):
-				lines = [lines]
+				if isinstance(lines, dict):
+					lines = [lines]
 
-			if isinstance(paxes, dict):
-				paxes = [paxes]
+				if isinstance(paxes, dict):
+					paxes = [paxes]
 
-			if isinstance(taxes, dict):
-				taxes = [taxes]
-			
-			if isinstance(lines, list):
-				for li in lines:
-					item = invoice_item(li.get("Service"), li)
-					si.append("items", {
-						"item_code": item.item_code,
-						"item_name": item.item_name,
-						"rate": li.get("@BaseLineAmount"),
-						"qty": -1 if invoice.get("@CreditInvoice") == "yes" else 1,
-						"custom_booking_code": li.get("@BookingCode"),
-						"custom_agency_reference": li.get("@AgencyReference"),
-						"custom_item_date": li.get("@LineDate"),
-						"custom_id_booking_line": li.get("@IdBookingLine"),
-						"custom_booking_date": li.get("@BookingDate"),
-						"custom_pax_number": li.get("@PaxNumber"),
-						"custom_begin_travel_date": li.get("@BeginTravelDate"),
-						"custom_end_travel_date":li.get("@EndTravelDate")
-					})
-
-			if isinstance(paxes, list):
-				for pax in paxes:
-					si.append("custom_passenger", {
-						"pax_id": pax.get("paxid"),
-						"name1": pax.get("name"),
-						"surname": pax.get("surname"),
-					})
-			
-			si.custom_total_pax = invoice.get("@TotalPax")
-			si.custom_total_adults = invoice.get("@TotalAdults")
-			si.custom_total_childrens = invoice.get("@TotalChildrens")
-
-			if isinstance(taxes, list):
-				for in_tax in taxes:
-					for tax in taxes_and_charges.taxes:
-						si.append("taxes", {
-							"charge_type": tax.charge_type,
-							"account_head": tax.account_head,
-							"description": tax.description,
-							"tax_amount": in_tax.get("@total")
+				if isinstance(taxes, dict):
+					taxes = [taxes]
+				
+				if isinstance(lines, list):
+					for li in lines:
+						item = invoice_item(li.get("Service"), li)
+						si.append("items", {
+							"item_code": item.item_code,
+							"item_name": item.item_name,
+							"rate": li.get("@BaseLineAmount"),
+							"qty": -1 if invoice.get("@CreditInvoice") == "yes" else 1,
+							"custom_booking_code": li.get("@BookingCode"),
+							"custom_agency_reference": li.get("@AgencyReference"),
+							"custom_item_date": li.get("@LineDate"),
+							"custom_id_booking_line": li.get("@IdBookingLine"),
+							"custom_booking_date": li.get("@BookingDate"),
+							"custom_pax_number": li.get("@PaxNumber"),
+							"custom_begin_travel_date": li.get("@BeginTravelDate"),
+							"custom_end_travel_date":li.get("@EndTravelDate")
 						})
 
-			si.set_missing_values()
-			si.insert(ignore_permissions=True)
+				if isinstance(paxes, list):
+					for pax in paxes:
+						si.append("custom_passenger", {
+							"pax_id": pax.get("paxid"),
+							"name1": pax.get("name"),
+							"surname": pax.get("surname"),
+						})
+				
+				si.custom_total_pax = invoice.get("@TotalPax")
+				si.custom_total_adults = invoice.get("@TotalAdults")
+				si.custom_total_childrens = invoice.get("@TotalChildrens")
+
+				if isinstance(taxes, list):
+					for in_tax in taxes:
+						for tax in taxes_and_charges.taxes:
+							si.append("taxes", {
+								"charge_type": tax.charge_type,
+								"account_head": tax.account_head,
+								"description": tax.description,
+								"tax_amount": in_tax.get("@total")
+							})
+
+				si.set_missing_values()
+				si.insert(ignore_permissions=True)
+	except Exception as e:
+		frappe.log_error(frappe.get_traceback(), "Sales Invoice Creation Error")
+		frappe.throw(_("An error occurred while creating the Sales Invoice: {0}").format(str(e)))
 		
 
 
