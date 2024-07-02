@@ -319,6 +319,7 @@ def sync_sales_invoice(doc, **args):
 def set_customer(customer):
 	gen = customer.get("General")
 	cont = customer.get("Contact")
+	detail = customer.get("InvoicingDetails")
 	cust_doc = {}
 	customerGroup = {}
 	if gen.get("CustomerGroup"):
@@ -339,6 +340,8 @@ def set_customer(customer):
 			"custom_customer_id": customer.get("@Id"),
 			"customer_name": gen.get("Name") if gen.get("Name") else "Name is not available",
 		})
+		if detail:
+			cust_doc.tax_id = detail.get("@TaxId")
 		cust_doc.customer_group = customerGroup.name if gen.get("CustomerGroup") else "Juniper"
 		if cont:
 			cust_doc.custom_address = f""""address_title": {cont.get("AddressNumber")}, \n "address_line1": {cont.get("Address")}, \n "city": {cont.get("City").get("#text")}, \n "county": {cont.get("Country")}, \n "pincode": {cont.get("@ZIP")}, \n "email_id": {cont.get("Email")}, \n "phone": {cont.get("Phone1")}, \n "fax": {cont.get("Fax")}"""
