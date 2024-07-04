@@ -291,6 +291,7 @@ def sync_sales_invoice(doc, **args):
 				"Something went wrong during the people sync. Click on {0} to generate a new one."
 			).format(button_label)
 		)
+	# print(res.text, "Responce Checking \n\n\n\n")
 	obj = xmltodict.parse(res.text, process_namespaces=False)
 	jsonvalue = json.dumps(obj)
 	value = json.loads(jsonvalue)
@@ -466,11 +467,11 @@ def set_sales_order(order, line):
 				paxes = [paxes]
 			item = order_item(li)
 			sell_rate_condition = li.get("Zone").get("country") == "Saudi Arabia"
-			item_tax = flt(li.get("SellingPrice")) * (15 / 100) if sell_rate_condition else 0
+			item_tax = flt(li.get("BasePriceWithOutTax")) * (15 / 100) if sell_rate_condition else 0
 			so.append("items", {
 				"item_code": item.item_code,
 				"item_name": item.item_name,
-				"rate": flt(li.get("SellingPrice")) - item_tax,
+				"rate": flt(li.get("BasePriceWithOutTax")),
 				"qty": 1
 			})
 

@@ -214,17 +214,21 @@
   {
    "fieldname": "invoice_from_date",
    "fieldtype": "Date",
-   "label": "From Date"
+   "in_list_view": 1,
+   "label": "From Date",
+   "reqd": 1
   },
   {
    "fieldname": "invoice_to_date",
    "fieldtype": "Date",
-   "label": "To Date"
+   "in_list_view": 1,
+   "label": "To Date",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-04-05 14:29:55.465178",
+ "modified": "2024-07-04 12:02:04.896195",
  "modified_by": "Administrator",
  "module": "Juniper",
  "name": "Juniper Site",
